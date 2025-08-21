@@ -10,7 +10,7 @@ public class Libreria
     {   return libreria.size();
     }
 
-    public void aggiungi(Libro l)
+    public void aggiungiLibro(Libro l)
     {   if(l == null)
             throw new NullPointerException("Il libro non può essere vuoto");
         String isbn = l.getISBN();  //nessun controllo su isbn null o black, poichè viene fatto già dal costruttore del libro
@@ -19,7 +19,7 @@ public class Libreria
         libreria.put(isbn, l);
     }
 
-    public boolean rimuovi(String isbn)
+    public boolean rimuoviLibro(String isbn)
     {   if(isbn == null)
             throw new NullPointerException("ISBN non valido");
         if(isbn.isBlank())
