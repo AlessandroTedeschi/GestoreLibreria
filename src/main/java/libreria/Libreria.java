@@ -11,7 +11,7 @@ public class Libreria
     }
 
     public void aggiungiLibro(Libro l)
-    {   if(l == null)
+    {   if (l == null)
             throw new NullPointerException("Il libro non può essere vuoto");
         String isbn = l.getISBN();  //nessun controllo su isbn null o black, poichè viene fatto già dal costruttore del libro
         if(libreria.containsKey(isbn))
@@ -62,12 +62,6 @@ public class Libreria
         }
         return ret;
     }
-
-
-
-
-
-
 }
 
 

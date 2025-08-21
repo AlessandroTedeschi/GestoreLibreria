@@ -7,6 +7,8 @@ public class RimuoviLibroCommand implements Command
 {
     private final String isbn;
     private final Libreria libreria;
+    private Libro libroRimosso;
+    private boolean eseguito;
 
     public RimuoviLibroCommand(String isbn, Libreria libreria)
     {   this.isbn = isbn;
@@ -15,6 +17,15 @@ public class RimuoviLibroCommand implements Command
 
     @Override
     public void execute()
-    {   libreria.rimuoviLibro(isbn);
+    {   libroRimosso = libreria.trovaLibro(isbn);
+        libreria.rimuoviLibro(isbn);
+        eseguito = true;
+    }
+
+    public void undo()
+    {   if(!eseguito)
+            return;
+        libreria.aggiungiLibro(libroRimosso);
+        eseguito = false;
     }
 }
