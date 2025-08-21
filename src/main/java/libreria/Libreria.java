@@ -1,8 +1,6 @@
 package libreria;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class Libreria
 {
@@ -34,32 +32,37 @@ public class Libreria
             throw new NullPointerException("ISBN non valido");
         if(isbn.isBlank())
             throw new IllegalArgumentException("ISBN non valido");
-        if(!libreria.containsKey(isbn))
-            throw new NoSuchElementException("Il libro con codice " + isbn + " non è presente nella libreria");
-        return libreria.get(isbn);
-    }
-
-    public void aggiornaStatoLettura(String isbn, StatoLettura s)
-    {  if(isbn == null)
-            throw new NullPointerException("ISBN non valido");
-        if(isbn.isBlank())
-            throw new IllegalArgumentException("ISBN non valido");
-        if(s==null)
-            throw new NullPointerException("Stato lettura nullo");
-        Libro l = libreria.get(isbn);
-        if(l == null)
-            throw new NoSuchElementException("Nessun libro con codice " + isbn);
-        l.aggiornaStatoLettura(s);
-    }
-
-    public void aggiornaValutazione(String isbn, int val)
-    {   if(isbn==null || isbn.isBlank())
-            throw new IllegalArgumentException("Codice ISBN non valido");
         Libro l = libreria.get(isbn);
         if(l==null)
             throw new NoSuchElementException("Nessun libro con codice " + isbn);
-        l.aggiornaValutazione(val);
+        return l;
     }
+
+    public void aggiornaStatoLettura(String isbn, StatoLettura s)
+    {   if(s==null)
+            throw new NullPointerException("Stato lettura nullo");
+        trovaLibro(isbn).aggiornaStatoLettura(s);
+    }
+
+    public void aggiornaValutazione(String isbn, int val)
+    {   trovaLibro(isbn).aggiornaValutazione(val);
+    }
+
+    //metodo di ricerca di un libro per autore o titolo
+    public List<Libro> cercaLibro(String s)
+    {   if(s==null)
+            throw new NullPointerException("Barra di ricerca nulla");
+        String r = s.trim().toLowerCase();
+        if(r.isBlank())
+            throw new IllegalArgumentException("Barra di ricerca vuota");
+        List<Libro> ret = new ArrayList<>();
+        for(Libro l : libreria.values())
+        {   if(l.getTitolo().toLowerCase().contains(r) || l.getAutore().toLowerCase().contains(r))
+                ret.add(l);
+        }
+        return ret;
+    }
+
 
 
 
