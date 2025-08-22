@@ -3,6 +3,7 @@ package command;
 
 import java.util.LinkedList;
 
+//INVOKER DEI COMANDI
 public class GestoreComandi
 {
     private final LinkedList<UndoableCommand> storiaComandi = new LinkedList<>();   //segue la logica LIFO
