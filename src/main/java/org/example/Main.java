@@ -9,8 +9,12 @@ import libreria.Genere;
 import libreria.Libreria;
 import libreria.Libro;
 import libreria.StatoLettura;
-
+import java.text.Collator;
+import java.util.Comparator;
+import java.util.Locale;
 import java.util.*;
+import java.util.stream.Collectors;
+import ordinamento.*;
 
 public class Main {
 
@@ -35,6 +39,7 @@ public class Main {
                     case "5": cerca(); break;
                     case "6": stampaTutti(); break;
                     case "7": annullaUltimo(); break;
+                    case "8": ordinaLibri();
                     case "0": running = false; break;
                     default: System.out.println("Scelta non valida.");
                 }
@@ -47,16 +52,18 @@ public class Main {
         System.out.println("Arrivederci!");
     }
 
+
     private static void stampaMenu() {
         System.out.println(
                 "1) Aggiungi libro\n" +
-                        "2) Rimuovi libro\n" +
-                        "3) Aggiorna stato lettura\n" +
-                        "4) Aggiorna valutazione\n" +
-                        "5) Cerca (titolo/autore)\n" +
-                        "6) Elenca tutti\n" +
-                        "7) Annulla ultimo comando\n" +
-                        "0) Esci"
+                "2) Rimuovi libro\n" +
+                "3) Aggiorna stato lettura\n" +
+                "4) Aggiorna valutazione\n" +
+                "5) Cerca (titolo/autore)\n" +
+                "6) Elenca tutti\n" +
+                "7) Annulla ultimo comando\n" +
+                "8) Ordina libri\n" +
+                "0) Esci"
         );
     }
 
@@ -96,6 +103,72 @@ public class Main {
         System.out.println("✅ Stato aggiornato.");
     }
 
+    private static void ordinaLibri()
+    {   System.out.println("[Scegli ordinamento:]");
+        System.out.println("1) Per titolo (A→Z)");
+        System.out.println("2) Per valutazione crescente");
+        System.out.println("3) Per valutazione decrescente");
+        System.out.println("0) Indietro");
+
+        while(true)
+        {   System.out.print("> ");
+            String scelta = IN.nextLine().trim();
+            switch (scelta) {
+                case "1": ordinaPerTitolo(); return;
+                case "2": ordinaPerValutazioneCrescente(); return;
+                case "3": ordinaPerValutazioneDecrescente(); return;
+                case "0": return;
+                default: System.out.println("Scelta non valida, riprova.");
+            }
+        }
+    }
+
+    private static void ordinaPerTitolo() {
+        System.out.println("[Ordina per titolo (A→Z)]");
+        Collator it = Collator.getInstance(Locale.ITALIAN);
+        it.setStrength(Collator.PRIMARY); // ignora accenti/maiuscole
+
+        Comparator<Libro> byTitle = (a, b) -> it.compare(
+                safe(a.getTitolo()), safe(b.getTitolo())
+        );
+
+        List<Libro> ordinati = LIBRERIA.getLibri().stream()
+                .sorted(byTitle)
+                .collect(Collectors.toList());
+
+        if (ordinati.isEmpty()) System.out.println("(nessun libro)");
+        else stampaLista(ordinati);
+    }
+
+    private static String safe(String s) {
+        return (s == null) ? "" : s.trim();
+    }
+
+
+    private static void ordinaPerValutazioneCrescente() {
+        System.out.println("[Ordina per valutazione (crescente)]");
+        Comparator<Libro> byRatingAsc = Comparator.comparingInt(Libro::getValutazione);
+
+        List<Libro> ordinati = LIBRERIA.getLibri().stream()
+                .sorted(byRatingAsc)
+                .collect(Collectors.toList());
+
+        if (ordinati.isEmpty()) System.out.println("(nessun libro)");
+        else stampaLista(ordinati);
+    }
+
+    private static void ordinaPerValutazioneDecrescente() {
+        System.out.println("[Ordina per valutazione (decrescente)]");
+        Comparator<Libro> byRatingDesc = Comparator.comparingInt(Libro::getValutazione).reversed();
+
+        List<Libro> ordinati = LIBRERIA.getLibri().stream()
+                .sorted(byRatingDesc)
+                .collect(Collectors.toList());
+
+        if (ordinati.isEmpty()) System.out.println("(nessun libro)");
+        else stampaLista(ordinati);
+    }
+
     private static void aggiornaValutazione() {
         System.out.println("[Aggiorna valutazione]");
         String isbn = prompt("ISBN");
@@ -104,6 +177,7 @@ public class Main {
         GESTORE.esegui(new AggiornaValutazioneCommand(LIBRERIA, isbn, v));
         System.out.println("✅ Valutazione aggiornata.");
     }
+
 
     private static void cerca() {
         System.out.println("[Cerca]");

@@ -1,5 +1,7 @@
 package libreria;
 
+import ordinamento.SortingStrategy;
+
 import java.util.*;
 
 public class Libreria
@@ -65,6 +67,10 @@ public class Libreria
                 ret.add(l);
         }
         return ret;
+    }
+
+    public List<Libro> ordinamentoLibri(SortingStrategy strategia)
+    {   return libreria.values().stream().sorted(strategia).toList();
     }
 }
 
