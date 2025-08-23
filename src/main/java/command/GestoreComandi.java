@@ -19,7 +19,7 @@ public class GestoreComandi
     public void annullaUltimoComando()
     {   if(!storiaComandi.isEmpty())
         {   UndoableCommand ultimo = storiaComandi.removeFirst();
-        ultimo.undo();
+            ultimo.undo();
         }
     }
 
