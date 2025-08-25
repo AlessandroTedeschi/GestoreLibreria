@@ -39,7 +39,7 @@ public class Main {
                     case "5": cerca(); break;
                     case "6": stampaTutti(); break;
                     case "7": annullaUltimo(); break;
-                    case "8": ordinaLibri();
+                    case "8": ordinaLibri(); break;
                     case "0": running = false; break;
                     default: System.out.println("Scelta non valida.");
                 }
@@ -68,40 +68,6 @@ public class Main {
     }
 
     // --- Azioni ---
-
-    private static void aggiungiLibro() {
-        System.out.println("[Aggiungi libro]");
-        String titolo = prompt("Titolo");
-        String autore = prompt("Autore");
-        String isbn = prompt("ISBN");
-        Genere genere = promptGenere();
-        StatoLettura stato = promptStatoLettura(true); // opzionale: invio vuoto = default in dominio
-        Integer valutazione = promptValutazione(true); // opzionale
-
-        Libro.Builder b = new Libro.Builder(titolo, autore, isbn, genere);
-        if (stato != null) b.statoLettura(stato);
-        if (valutazione != null) b.valutazione(valutazione);
-        Libro libro = b.build();
-
-        GESTORE.esegui(new AggiungiLibroCommand(libro, LIBRERIA));
-        System.out.println("✅ Libro aggiunto.");
-    }
-
-    private static void rimuoviLibro() {
-        System.out.println("[Rimuovi libro]");
-        String isbn = prompt("ISBN");
-        GESTORE.esegui(new RimuoviLibroCommand(isbn, LIBRERIA));
-        System.out.println("✅ Libro rimosso.");
-    }
-
-    private static void aggiornaStato() {
-        System.out.println("[Aggiorna stato lettura]");
-        String isbn = prompt("ISBN");
-        StatoLettura stato = promptStatoLettura(false);
-        // NOTA: AggiornaStatoLetturaCommand è non-undoable → non finirà nella cronologia
-        GESTORE.esegui(new AggiornaStatoLetturaCommand(LIBRERIA, stato, isbn));
-        System.out.println("✅ Stato aggiornato.");
-    }
 
     private static void ordinaLibri()
     {   System.out.println("[Scegli ordinamento:]");
@@ -167,6 +133,41 @@ public class Main {
 
         if (ordinati.isEmpty()) System.out.println("(nessun libro)");
         else stampaLista(ordinati);
+    }
+
+
+    private static void aggiungiLibro() {
+        System.out.println("[Aggiungi libro]");
+        String titolo = prompt("Titolo");
+        String autore = prompt("Autore");
+        String isbn = prompt("ISBN");
+        Genere genere = promptGenere();
+        StatoLettura stato = promptStatoLettura(true); // opzionale: invio vuoto = default in dominio
+        Integer valutazione = promptValutazione(true); // opzionale
+
+        Libro.Builder b = new Libro.Builder(titolo, autore, isbn, genere);
+        if (stato != null) b.statoLettura(stato);
+        if (valutazione != null) b.valutazione(valutazione);
+        Libro libro = b.build();
+
+        GESTORE.esegui(new AggiungiLibroCommand(libro, LIBRERIA));
+        System.out.println("✅ Libro aggiunto.");
+    }
+
+    private static void rimuoviLibro() {
+        System.out.println("[Rimuovi libro]");
+        String isbn = prompt("ISBN");
+        GESTORE.esegui(new RimuoviLibroCommand(isbn, LIBRERIA));
+        System.out.println("✅ Libro rimosso.");
+    }
+
+    private static void aggiornaStato() {
+        System.out.println("[Aggiorna stato lettura]");
+        String isbn = prompt("ISBN");
+        StatoLettura stato = promptStatoLettura(false);
+        // NOTA: AggiornaStatoLetturaCommand è non-undoable → non finirà nella cronologia
+        GESTORE.esegui(new AggiornaStatoLetturaCommand(LIBRERIA, stato, isbn));
+        System.out.println("✅ Stato aggiornato.");
     }
 
     private static void aggiornaValutazione() {
