@@ -18,24 +18,57 @@ public class BarraSuperiore extends JPanel {
     public BarraSuperiore() {
         super(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
-        gc.insets = new Insets(4,6,4,6);
+        gc.insets = new Insets(4, 6, 4, 6);
         gc.gridy = 0;
 
+        setBorder(BorderFactory.createEmptyBorder(8, 8, 12, 8));
+
+        // === Font sicuri dal L&F ===
+        Font baseLabel = UIManager.getFont("Label.font");
+        if (baseLabel == null) baseLabel = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
+        Font labelBig  = baseLabel.deriveFont(14f); // più grande ma NON bold
+
+        Font baseCtrl  = UIManager.getFont("TextField.font");
+        if (baseCtrl == null) baseCtrl = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
+        Font ctrlSm    = baseCtrl.deriveFont(12f);  // controlli più compatti
+
+        // === Etichette ===
+        JLabel lblSearch = new JLabel("Cerca (titolo/autore):");
+        lblSearch.setFont(labelBig);
+
+        JLabel lblSort = new JLabel("Ordina per:");
+        lblSort.setFont(labelBig);
+
+        // === Controlli compatti ===
+        searchField.setFont(ctrlSm);
+        searchField.setMargin(new Insets(2, 6, 2, 6));
+        // se vuoi stringere un po’: searchField.setColumns(24);
+
+        sortCombo.setFont(ctrlSm);
+        Dimension comboSize = sortCombo.getPreferredSize();
+        sortCombo.setPreferredSize(new Dimension(comboSize.width, 22));
+
+        addButton.setFont(ctrlSm);
+        addButton.setMargin(new Insets(2, 10, 2, 10));
+        addButton.setFocusPainted(false);
+
+        // === Layout ===
         gc.gridx = 0; gc.weightx = 0; gc.fill = GridBagConstraints.NONE;
-        add(new JLabel("Cerca (titolo/autore):"), gc);
+        add(lblSearch, gc);
 
         gc.gridx = 1; gc.weightx = 1; gc.fill = GridBagConstraints.HORIZONTAL;
         add(searchField, gc);
 
         gc.gridx = 2; gc.weightx = 0; gc.fill = GridBagConstraints.NONE;
-        add(new JLabel("Ordina per:"), gc);
+        add(lblSort, gc);
 
-        gc.gridx = 3;
+        gc.gridx = 3; gc.weightx = 0; gc.fill = GridBagConstraints.NONE;
         add(sortCombo, gc);
 
-        gc.gridx = 4;
+        gc.gridx = 4; gc.weightx = 0; gc.fill = GridBagConstraints.NONE;
         add(addButton, gc);
 
+        // === Eventi ===
         DocumentListener dl = new DocumentListener() {
             private void fire(){ onSearchChanged.accept(searchField.getText()); }
             public void insertUpdate(DocumentEvent e){ fire(); }
@@ -47,10 +80,11 @@ public class BarraSuperiore extends JPanel {
         addButton.addActionListener(e -> onAdd.run());
     }
 
-    public void setOnSearchChanged(Consumer<String> c){ onSearchChanged = c != null ? c : s -> {}; }
-    public void setOnSortChanged(Consumer<OpzioniOrdinamento> c){ onSortChanged = c != null ? c : s -> {}; }
-    public void setOnAdd(Runnable r){ onAdd = r != null ? r : () -> {}; }
+    public void setOnSearchChanged(Consumer<String> c){ onSearchChanged = (c != null) ? c : s -> {}; }
+    public void setOnSortChanged(Consumer<OpzioniOrdinamento> c){ onSortChanged = (c != null) ? c : s -> {}; }
+    public void setOnAdd(Runnable r){ onAdd = (r != null) ? r : () -> {}; }
     public void setSearchText(String text) { searchField.setText(text != null ? text : ""); }
 }
+
 
 
