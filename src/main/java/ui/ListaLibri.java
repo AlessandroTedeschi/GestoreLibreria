@@ -1,0 +1,53 @@
+package ui;
+
+import libreria.Libro;
+
+import javax.swing.*;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.util.List;
+import java.util.function.Consumer;
+
+public class ListaLibri extends JPanel {
+    private final JTable table;
+    private final DefaultTableModel model;
+    private Consumer<String> onSelectionChangedIsbn = s -> {};
+
+    public ListaLibri() {
+        super(new BorderLayout());
+        model = new DefaultTableModel(
+                new Object[]{"Titolo", "Autore", "ISBN", "Genere", "Stato", "Valutazione"}, 0
+        ) {
+            @Override public boolean isCellEditable(int r, int c) { return false; }
+        };
+        table = new JTable(model);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.getSelectionModel().addListSelectionListener(selectionListener());
+        add(new JScrollPane(table), BorderLayout.CENTER);
+    }
+
+    private ListSelectionListener selectionListener() {
+        return e -> { if (!e.getValueIsAdjusting()) onSelectionChangedIsbn.accept(getSelectedIsbn()); };
+    }
+
+    public void setBooks(List<Libro> books) {
+        model.setRowCount(0);
+        for (Libro b : books) {
+            model.addRow(new Object[]{
+                    b.getTitolo(), b.getAutore(), b.getISBN(),
+                    b.getGenere(), b.getStatoLettura(), b.getValutazione()
+            });
+        }
+    }
+
+    public String getSelectedIsbn() {
+        int row = table.getSelectedRow();
+        if (row < 0) return null;
+        return (String) model.getValueAt(row, 2); // colonna ISBN
+    }
+
+    public void setOnSelectionChanged(Consumer<String> listener) {
+        this.onSelectionChangedIsbn = (listener != null) ? listener : s -> {};
+    }
+}

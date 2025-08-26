@@ -1,0 +1,33 @@
+package ui;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class BarraDeiBottoni extends JPanel {
+    private final JButton btnModifica = new JButton("Modifica");
+    private final JButton btnRimuovi  = new JButton("Rimuovi");
+    private final JButton btnAnnulla  = new JButton("Annulla");
+
+    private Runnable onModifica = () -> {};
+    private Runnable onRimuovi = () -> {};
+    private Runnable onAnnulla = () -> {};
+
+    public BarraDeiBottoni() {
+        super(new FlowLayout(FlowLayout.LEFT, 8, 6));
+        add(btnModifica); add(btnRimuovi); add(btnAnnulla);
+        btnModifica.addActionListener(e -> onModifica.run());
+        btnRimuovi.addActionListener(e -> onRimuovi.run());
+        btnAnnulla.addActionListener(e -> onAnnulla.run());
+        setButtonsEnabled(false, false, false);
+    }
+
+    public void setButtonsEnabled(boolean modifica, boolean rimuovi, boolean annulla) {
+        btnModifica.setEnabled(modifica);
+        btnRimuovi.setEnabled(rimuovi);
+        btnAnnulla.setEnabled(annulla);
+    }
+    public void setOnModifica(Runnable r){ onModifica = r != null ? r : () -> {}; }
+    public void setOnRimuovi(Runnable r){ onRimuovi  = r != null ? r : () -> {}; }
+    public void setOnAnnulla(Runnable r){ onAnnulla  = r != null ? r : () -> {}; }
+}
+

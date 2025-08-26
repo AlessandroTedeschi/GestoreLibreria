@@ -21,8 +21,8 @@ public class Libreria
         libreria.put(isbn, l);
     }
 
-    public Collection<Libro> getLibri()
-    {   return libreria.values();
+    public List<Libro> getLibri()
+    {   return new ArrayList<>(libreria.values());
     }
 
     public boolean rimuoviLibro(String isbn)
