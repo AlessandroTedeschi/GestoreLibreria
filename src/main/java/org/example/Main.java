@@ -2,8 +2,6 @@ package org.example;
 
 import command.AggiungiLibroCommand;
 import command.RimuoviLibroCommand;
-import command.AggiornaStatoLetturaCommand;
-import command.AggiornaValutazioneCommand;
 import command.GestoreComandi;
 import libreria.Genere;
 import libreria.Libreria;
@@ -14,7 +12,6 @@ import java.util.Comparator;
 import java.util.Locale;
 import java.util.*;
 import java.util.stream.Collectors;
-import ordinamento.*;
 
 public class Main {
 
@@ -34,8 +31,6 @@ public class Main {
                 switch (scelta) {
                     case "1": aggiungiLibro(); break;
                     case "2": rimuoviLibro(); break;
-                    case "3": aggiornaStato(); break;
-                    case "4": aggiornaValutazione(); break;
                     case "5": cerca(); break;
                     case "6": stampaTutti(); break;
                     case "7": annullaUltimo(); break;
@@ -161,23 +156,7 @@ public class Main {
         System.out.println("✅ Libro rimosso.");
     }
 
-    private static void aggiornaStato() {
-        System.out.println("[Aggiorna stato lettura]");
-        String isbn = prompt("ISBN");
-        StatoLettura stato = promptStatoLettura(false);
-        // NOTA: AggiornaStatoLetturaCommand è non-undoable → non finirà nella cronologia
-        GESTORE.esegui(new AggiornaStatoLetturaCommand(LIBRERIA, stato, isbn));
-        System.out.println("✅ Stato aggiornato.");
-    }
 
-    private static void aggiornaValutazione() {
-        System.out.println("[Aggiorna valutazione]");
-        String isbn = prompt("ISBN");
-        int v = promptValutazione(false);
-        // Portati allo stato LETTO? Dipende dalle tue regole. Qui non forziamo nulla:
-        GESTORE.esegui(new AggiornaValutazioneCommand(LIBRERIA, isbn, v));
-        System.out.println("✅ Valutazione aggiornata.");
-    }
 
 
     private static void cerca() {

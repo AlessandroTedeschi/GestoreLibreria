@@ -16,7 +16,7 @@ public class BookFormDialog extends JDialog {
     private final JTextField isbn = new JTextField();
     private final JComboBox<Genere> genere = new JComboBox<>(Genere.values());
     private final JComboBox<StatoLettura> stato = new JComboBox<>(StatoLettura.values());
-    private final JSpinner valutazione = new JSpinner(new SpinnerNumberModel(0, 0, 5, 1)); // 1..5
+    private final JSpinner valutazione = new JSpinner(new SpinnerNumberModel(0, 0, 5, 1));
 
     private BookFormDialog(Window owner, String title, boolean editMode) {
         super(owner, title, ModalityType.APPLICATION_MODAL);
@@ -38,7 +38,7 @@ public class BookFormDialog extends JDialog {
             if (s != null && s != libreria.StatoLettura.LETTO) {
                 valutazione.setValue(0);
             } else if (s == libreria.StatoLettura.LETTO && ((Integer)valutazione.getValue()) == 0) {
-                valutazione.setValue(3); // default se torna LETTO
+                valutazione.setValue(3);
             }
         });
 

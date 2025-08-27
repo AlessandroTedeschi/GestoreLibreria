@@ -44,15 +44,6 @@ public class Libreria
         return l;
     }
 
-    public void aggiornaStatoLettura(String isbn, StatoLettura s)
-    {   if(s==null)
-            throw new NullPointerException("Stato lettura nullo");
-        trovaLibro(isbn).aggiornaStatoLettura(s);
-    }
-
-    public void aggiornaValutazione(String isbn, int val)
-    {   trovaLibro(isbn).aggiornaValutazione(val);
-    }
 
     //metodo di ricerca di un libro per autore o titolo
     public List<Libro> cercaLibro(String s)

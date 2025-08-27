@@ -23,26 +23,25 @@ public class BarraSuperiore extends JPanel {
 
         setBorder(BorderFactory.createEmptyBorder(8, 8, 12, 8));
 
-        // === Font sicuri dal L&F ===
+
         Font baseLabel = UIManager.getFont("Label.font");
         if (baseLabel == null) baseLabel = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
-        Font labelBig  = baseLabel.deriveFont(14f); // più grande ma NON bold
+        Font labelBig  = baseLabel.deriveFont(14f);
 
         Font baseCtrl  = UIManager.getFont("TextField.font");
         if (baseCtrl == null) baseCtrl = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
-        Font ctrlSm    = baseCtrl.deriveFont(12f);  // controlli più compatti
+        Font ctrlSm    = baseCtrl.deriveFont(12f);
 
-        // === Etichette ===
+
         JLabel lblSearch = new JLabel("Cerca (titolo/autore):");
         lblSearch.setFont(labelBig);
 
         JLabel lblSort = new JLabel("Ordina per:");
         lblSort.setFont(labelBig);
 
-        // === Controlli compatti ===
+
         searchField.setFont(ctrlSm);
         searchField.setMargin(new Insets(2, 6, 2, 6));
-        // se vuoi stringere un po’: searchField.setColumns(24);
 
         sortCombo.setFont(ctrlSm);
         Dimension comboSize = sortCombo.getPreferredSize();
@@ -52,7 +51,7 @@ public class BarraSuperiore extends JPanel {
         addButton.setMargin(new Insets(2, 10, 2, 10));
         addButton.setFocusPainted(false);
 
-        // === Layout ===
+
         gc.gridx = 0; gc.weightx = 0; gc.fill = GridBagConstraints.NONE;
         add(lblSearch, gc);
 
@@ -68,7 +67,7 @@ public class BarraSuperiore extends JPanel {
         gc.gridx = 4; gc.weightx = 0; gc.fill = GridBagConstraints.NONE;
         add(addButton, gc);
 
-        // === Eventi ===
+
         DocumentListener dl = new DocumentListener() {
             private void fire(){ onSearchChanged.accept(searchField.getText()); }
             public void insertUpdate(DocumentEvent e){ fire(); }

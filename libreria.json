@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "titolo": "Il ramo d\u0027oro",
+    "autore": "Frazer",
+    "isbn": "547453",
+    "genere": "ROMANZO",
+    "statoLettura": "LETTO",
+    "valutazione": 2
+  },
+  {
+    "titolo": "Divina Commedia",
+    "autore": "Dante Alighieri",
+    "isbn": "123",
+    "genere": "FANTASY",
+    "statoLettura": "LETTO",
+    "valutazione": 3
+  },
+  {
+    "titolo": "La Coscienza di Zeno",
+    "autore": "Italo Svevo",
+    "isbn": "789",
+    "genere": "ROMANZO",
+    "statoLettura": "LETTO",
+    "valutazione": 5
+  },
+  {
+    "titolo": "Uno, Nessuno e Centomila",
+    "autore": "Pirandello",
+    "isbn": "543654",
+    "genere": "ROMANZO",
+    "statoLettura": "IN_LETTURA",
+    "valutazione": 0
+  }
+]

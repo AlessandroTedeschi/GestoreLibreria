@@ -1,8 +1,8 @@
 package ui;
 
+import command.*;
 import libreria.Libro;
 import libreria.Libreria;
-import ordinamento.SortingStrategy;
 
 import javax.swing.*;
 import java.util.*;
@@ -12,51 +12,57 @@ public class LibreriaMediator {
 
     private final Libreria model;
     private final MainFrame frame;
+    private final GestoreComandi invoker;
 
     private String currentQuery = "";
     private OpzioniOrdinamento currentSort = OpzioniOrdinamento.ALFABETICO;
 
-    private final Deque<UndoAction> undoStack = new ArrayDeque<>();
-
-    public LibreriaMediator(Libreria model, MainFrame frame) {
+    public LibreriaMediator(Libreria model, MainFrame frame, GestoreComandi invoker) {
         this.model = model;
         this.frame = frame;
+        this.invoker = invoker;
 
-        frame.getTopBar().setOnSearchChanged(q -> {
+        //chiamata quando cambia il campo di ricerca
+        frame.getBarraSuperiore().setOnSearchChanged(q -> {
             currentQuery = (q == null) ? "" : q.trim();
             reloadList();
         });
-        frame.getTopBar().setOnSortChanged(s -> {
+
+        //chiamata quando cambia il campo di ordinamento
+        frame.getBarraSuperiore().setOnSortChanged(s -> {
             currentSort = (s == null) ? OpzioniOrdinamento.ALFABETICO : s;
             reloadList();
         });
-        frame.getTopBar().setOnAdd(this::onAdd);
 
-        frame.getBookList().setOnSelectionChanged(isbn -> updateButtonsState());
+        //quando viene cliccato il pulsante aggiungi viene chiamtato onAdd() per aggiungere un libro
+        frame.getBarraSuperiore().setOnAdd(this::onAdd);
 
-        frame.getBottomBar().setOnModifica(this::onEdit);
-        frame.getBottomBar().setOnRimuovi(this::onRemove);
-        frame.getBottomBar().setOnAnnulla(this::onUndo);
+        //serve per attivare/disattivare i bottoni modifica e rimuovi quando si seleziona/deseleziona un libro
+        frame.getListaLibri().setOnSelectionChanged(isbn -> updateButtonsState());
 
-        // primo caricamento: tutti i libri
+        //collega i bottoni rimuovi, modifica, annulla della barra dei bottoni alle rispettive azioni dichiarate in questa classe
+        frame.getBarraDeiBottoni().setOnModifica(this::onEdit);
+        frame.getBarraDeiBottoni().setOnRimuovi(this::onRemove);
+        frame.getBarraDeiBottoni().setOnAnnulla(this::onUndo);
+
+        //quando viene avviata l'applicazione vengono caricati tutti i libri
         reloadList();
     }
 
-    /* ========================= OPERAZIONI ========================= */
 
+    //ricarica i dati salvati nella tabella dei libri ogni volta che un'azione dell'utente lo richiede
     public void reloadList() {
         try {
             List<Libro> lista;
 
+            //vengono caricati i libri che soddisfano la ricerca dell'utente nella lista
             if (currentQuery == null || currentQuery.isBlank()) {
-                // TUTTI I LIBRI (niente ricerca vuota)
                 lista = tuttiLibri();
             } else {
-                // SOLO RISULTATI della ricerca
                 lista = model.cercaLibro(currentQuery);
             }
 
-            // Ordinamento lato UI
+            //ricarica i libri in base all'ordinamento scelto dall'utente nella lista
             Comparator<Libro> cmp = switch (currentSort) {
                 case ALFABETICO -> Comparator.comparing(Libro::getTitolo, String.CASE_INSENSITIVE_ORDER);
                 case VALUTAZIONE_CRESCENTE -> Comparator.comparingInt(Libro::getValutazione)
@@ -66,14 +72,17 @@ public class LibreriaMediator {
             };
             lista = lista.stream().sorted(cmp).collect(Collectors.toList());
 
-            frame.getBookList().setBooks(lista);
+            //aggiorna l'interfaccia grafica, mostrando all'uente solo i libri contenuti nella lista (quelli che soddisfano la ricerca)
+            //o lo specifico ordinamento scelto
+            frame.getListaLibri().setBooks(lista);
             updateButtonsState();
 
-        } catch (IllegalArgumentException ex) {
-            // eventuale “Barra di ricerca vuota” o simili → fallback a tutti
-            frame.getBookList().setBooks(tuttiLibri());
+        }
+        catch (IllegalArgumentException ex) {
+            frame.getListaLibri().setBooks(tuttiLibri());
             updateButtonsState();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             JOptionPane.showMessageDialog(frame, "Errore nel caricamento: " + ex.getMessage(),
                     "Errore", JOptionPane.ERROR_MESSAGE);
         }
@@ -83,21 +92,27 @@ public class LibreriaMediator {
         return model.getLibri();
     }
 
+
+    //metodo chiamato alla pressione del bottone aggiungi
     private void onAdd() {
+
+        //viene mostrata la finestra di dialogo per inserire un nuovo libro
         BookFormDialog.Result res = BookFormDialog.showNew(frame);
+
+        //se l'utente non ha premuto "OK" per salvare il libro non viene salvato nulla
         if (res == null || !res.confirmed() || res.libro() == null) return;
 
         try {
+            //il libro appena "compilato" nella finestra di dialogo viene aggiunto
             Libro nuovo = res.libro();
+            UndoableCommand cmd = new AggiungiLibroCommand(nuovo, model);
+            invoker.esegui(cmd);
 
-            // TODO (se vuoi usare il tuo Command): new AggiungiLibriCommand(model, List.of(nuovo)).execute();
-            model.aggiungiLibro(nuovo);
-
-            undoStack.push(UndoAction.added(nuovo));
-
-            currentQuery = "";                   // svuota filtro → mostra tutti
-            frame.getTopBar().setSearchText("");
+            //viene ricaricata la lista
+            currentQuery = "";
+            frame.getBarraSuperiore().setSearchText("");
             reloadList();
+            //updateButtonsState();
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(frame, "Aggiunta fallita: " + ex.getMessage(),
@@ -105,27 +120,40 @@ public class LibreriaMediator {
         }
     }
 
+    //metodo chiamato alla pressione del bottone modifica
     private void onEdit() {
-        String isbn = frame.getBookList().getSelectedIsbn();
+        String isbn = frame.getListaLibri().getSelectedIsbn();
         if (isbn == null) return;
 
-        Libro sel;
-        try { sel = model.trovaLibro(isbn); }
+        //recupera dalla lista di Libri quello corrispondente all'isbn
+        Libro vecchioLibrio;
+        try { vecchioLibrio = model.trovaLibro(isbn); }
         catch (Exception ex) {
             JOptionPane.showMessageDialog(frame, "Selezione non valida: " + ex.getMessage(),
                     "Errore", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        BookFormDialog.Result res = BookFormDialog.showEdit(frame, sel);
+        //viene aperta la finestra di dialogo uguale a quella del bottone aggiungi con i campi precompilati del libro selezionato
+        BookFormDialog.Result res = BookFormDialog.showEdit(frame, vecchioLibrio);
         if (!res.confirmed() || res.libro() == null) return;
 
-        try {
-            // strategia semplice: rimuovi → aggiungi (ISBN invariato)
-            model.rimuoviLibro(sel.getISBN());
-            model.aggiungiLibro(res.libro());
+        final Libro nuovoLibro = res.libro();
 
-            // (di default non metto la modifica nello stack undo; se vuoi la gestiamo)
+        //se non è cambiato nulla l'istanza rimane quella già presente
+        boolean same =
+                java.util.Objects.equals(vecchioLibrio.getTitolo(), nuovoLibro.getTitolo()) &&
+                        java.util.Objects.equals(vecchioLibrio.getAutore(), nuovoLibro.getAutore()) &&
+                        vecchioLibrio.getGenere() == nuovoLibro.getGenere()      &&
+                        vecchioLibrio.getStatoLettura() == nuovoLibro.getStatoLettura()&&
+                        vecchioLibrio.getValutazione() == nuovoLibro.getValutazione();
+        if (same) return;
+
+        //viene aggiornata la lista con il nuovo libro (in realtà non viene direttamente modificata
+        //l'istanza del libro, ma viene eliminata quella vecchia e aggiunta una nuova istanza con i nuovi campi
+        try {
+            Command cmd = new ModificaLibroCommand(model, vecchioLibrio.getISBN(), nuovoLibro);
+            cmd.execute();
             reloadList();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(frame, "Modifica fallita: " + ex.getMessage(),
@@ -133,10 +161,12 @@ public class LibreriaMediator {
         }
     }
 
+    //metodo chiamato alla pressione del bottone rimuovi
     private void onRemove() {
-        String isbn = frame.getBookList().getSelectedIsbn();
+        String isbn = frame.getListaLibri().getSelectedIsbn();
         if (isbn == null) return;
 
+        //recupera dalla lista di Libri quello corrispondente all'isbn
         Libro daRimuovere;
         try { daRimuovere = model.trovaLibro(isbn); }
         catch (Exception ex) {
@@ -145,33 +175,31 @@ public class LibreriaMediator {
             return;
         }
 
+        //richiesta di conferma all'utente
         int ok = JOptionPane.showConfirmDialog(frame,
                 "Eliminare \"" + daRimuovere.getTitolo() + "\"?", "Conferma",
                 JOptionPane.YES_NO_OPTION);
         if (ok != JOptionPane.YES_OPTION) return;
 
+        //rimuove il libro e aggiorna la lista dei libri
         try {
-            // TODO (se vuoi usare il tuo Command): new RimuoviLibroCommand(model, isbn).execute();
-            boolean removed = model.rimuoviLibro(isbn);
-            if (removed) {
-                undoStack.push(UndoAction.removed(daRimuovere));
-                reloadList();
-            }
+            UndoableCommand cmd = new RimuoviLibroCommand(isbn, model);
+            invoker.esegui(cmd);
+            reloadList();
+            //updateButtonsState();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(frame, "Eliminazione fallita: " + ex.getMessage(),
                     "Errore", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    //metodo chiamato alla pressione del bottone annulla
     private void onUndo() {
-        if (undoStack.isEmpty()) return;
-        UndoAction action = undoStack.pop();
+        if (!invoker.hasUndo()) return;
         try {
-            switch (action.type) {
-                case ADD -> model.rimuoviLibro(action.libro.getISBN()); // annulla un'aggiunta
-                case REMOVE -> model.aggiungiLibro(action.libro);       // annulla una rimozione
-            }
+            invoker.annullaUltimoComando();
             reloadList();
+            //updateButtonsState();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(frame, "Annulla fallito: " + ex.getMessage(),
                     "Errore", JOptionPane.ERROR_MESSAGE);
@@ -179,18 +207,9 @@ public class LibreriaMediator {
     }
 
     private void updateButtonsState() {
-        boolean hasSel = frame.getBookList().getSelectedIsbn() != null;
-        boolean canUndo = !undoStack.isEmpty();
-        frame.getBottomBar().setButtonsEnabled(hasSel, hasSel, canUndo);
-    }
-
-    /* -------------------- Undo support -------------------- */
-    private enum Type { ADD, REMOVE }
-    private static class UndoAction {
-        final Type type; final Libro libro;
-        UndoAction(Type t, Libro l){ type = t; libro = Objects.requireNonNull(l); }
-        static UndoAction added(Libro l){ return new UndoAction(Type.ADD, l); }
-        static UndoAction removed(Libro l){ return new UndoAction(Type.REMOVE, l); }
+        boolean hasSel = frame.getListaLibri().getSelectedIsbn() != null;
+        boolean canUndo = invoker.hasUndo();
+        frame.getBarraDeiBottoni().setButtonsEnabled(hasSel, hasSel, canUndo);
     }
 }
 

@@ -23,16 +23,14 @@ public class ListaLibri extends JPanel {
         };
         table = new JTable(model);
 
-        Font cellFont   = table.getFont().deriveFont(13f);   // prima 16
+        Font cellFont   = table.getFont().deriveFont(13f);
         Font headerFont = table.getTableHeader().getFont().deriveFont(Font.BOLD, 13f);
         table.setFont(cellFont);
         table.getTableHeader().setFont(headerFont);
 
-        // altezza riga + spaziatura fra celle
-        table.setRowHeight(22);                              // più compatto (default è ~16–18)
+        table.setRowHeight(22);
         table.setIntercellSpacing(new Dimension(0, 4));
 
-        // padding interno alle celle
         table.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
             { setOpaque(true); setBorder(BorderFactory.createEmptyBorder(2, 6, 2, 6)); }
             @Override public java.awt.Component getTableCellRendererComponent(
@@ -66,7 +64,7 @@ public class ListaLibri extends JPanel {
     public String getSelectedIsbn() {
         int row = table.getSelectedRow();
         if (row < 0) return null;
-        return (String) model.getValueAt(row, 2); // colonna ISBN
+        return (String) model.getValueAt(row, 2);
     }
 
     public void setOnSelectionChanged(Consumer<String> listener) {

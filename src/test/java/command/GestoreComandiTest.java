@@ -41,22 +41,9 @@ public class GestoreComandiTest
         assertFalse(gestore.hasUndo(), "Dopo annullaUltimoComando() la cronologia deve risultare vuota");
     }
 
-    @Test
-    @DisplayName("I command NON annullabili non entrano nella cronologia")
-    void nonUndoableNonTracciato() {
-        libreria.aggiungiLibro(libro1);
-        AggiornaStatoLetturaCommand updateState =
-                new AggiornaStatoLetturaCommand(libreria, StatoLettura.IN_LETTURA, libro1.getISBN());   //comando non annulabile
-        gestore.esegui(updateState);
-        assertEquals(StatoLettura.IN_LETTURA, libreria.trovaLibro(libro1.getISBN()).getStatoLettura());
-        assertFalse(gestore.hasUndo(), "I command non annullabili non devono finire in cronologia");
-        AggiornaValutazioneCommand updateRating =
-                new AggiornaValutazioneCommand(libreria, libro1.getISBN(), 4);
-        libreria.aggiornaStatoLettura(libro1.getISBN(), StatoLettura.LETTO);
-        gestore.esegui(updateRating);
-        assertEquals(4, libreria.trovaLibro(libro1.getISBN()).getValutazione());
-        assertFalse(gestore.hasUndo());
-    }
+
+
+
 
     @Test
     @DisplayName("annullaUltimoComando() a cronologia vuota è un'operazione nulla (non lancia, non cambia lo stato)")

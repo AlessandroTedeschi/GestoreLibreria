@@ -85,61 +85,6 @@ class LibreriaTest {
         assertThrows(NoSuchElementException.class, () -> libreria.trovaLibro("000"));
     }
 
-    //AGGIORNA STATO LETTURA
-    @Test
-    void testAggiornaStatoLetturaCorretto() {
-        libreria.aggiungiLibro(libro1);
-        libreria.aggiornaStatoLettura("123", StatoLettura.IN_LETTURA);
-        assertEquals(StatoLettura.IN_LETTURA, libro1.getStatoLettura());
-    }
-
-    @Test
-    void testAggiornaStatoLetturaLibroNonPresente() {
-        assertThrows(NoSuchElementException.class,
-                () -> libreria.aggiornaStatoLettura("999", StatoLettura.LETTO));
-    }
-
-    @Test
-    void testAggiornaStatoLetturaISBNNonValido() {
-        assertThrows(IllegalArgumentException.class,
-                () -> libreria.aggiornaStatoLettura("", StatoLettura.LETTO));
-    }
-
-    @Test
-    void testAggiornaStatoLetturaNull() {
-        libreria.aggiungiLibro(libro1);
-        assertThrows(NullPointerException.class,
-                () -> libreria.aggiornaStatoLettura("123", null));
-    }
-
-    //AGGIORNA VALUTAZIONE
-    @Test
-    void testAggiornaValutazioneCorretto() {
-        libreria.aggiungiLibro(libro1);
-        libro1.aggiornaStatoLettura(StatoLettura.LETTO);
-        libreria.aggiornaValutazione("123", 4);
-        assertEquals(4, libro1.getValutazione());
-    }
-
-    @Test
-    void testAggiornaValutazioneLibroNonPresente() {
-        assertThrows(NoSuchElementException.class,
-                () -> libreria.aggiornaValutazione("999", 5));
-    }
-
-    @Test
-    void testAggiornaValutazioneISBNNonValido() {
-        assertThrows(IllegalArgumentException.class,
-                () -> libreria.aggiornaValutazione("", 5));
-    }
-
-    @Test
-    void testAggiornaValutazioneNonPermessa() {
-        libreria.aggiungiLibro(libro1);
-        assertThrows(IllegalStateException.class,
-                () -> libreria.aggiornaValutazione("123", 4));
-    }
-
     //CERCA
     @Test
     void testCercaPerTitoloParziale() {

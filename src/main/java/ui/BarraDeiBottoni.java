@@ -15,21 +15,21 @@ public class BarraDeiBottoni extends JPanel {
     public BarraDeiBottoni() {
         super(new FlowLayout(FlowLayout.LEFT, 8, 6));
 
-        // Font sicuro dal L&F (niente getFont() sul JDialog/frame)
+
         Font base  = UIManager.getFont("Button.font");
         if (base == null) base = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
-        Font btnSm = base.deriveFont(12f); // leggermente più piccolo/compatto
+        Font btnSm = base.deriveFont(12f);
 
-        // Bottoni compatti
+
         Insets compact = new Insets(2, 10, 2, 10);
         for (JButton b : new JButton[]{btnModifica, btnRimuovi, btnAnnulla}) {
             b.setFont(btnSm);
             b.setMargin(compact);
-            b.setFocusPainted(false); // look più pulito
+            b.setFocusPainted(false);
             add(b);
         }
 
-        // Wiring
+
         btnModifica.addActionListener(e -> onModifica.run());
         btnRimuovi.addActionListener(e -> onRimuovi.run());
         btnAnnulla.addActionListener(e -> onAnnulla.run());

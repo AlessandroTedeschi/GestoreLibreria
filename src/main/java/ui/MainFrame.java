@@ -3,6 +3,7 @@ package ui;
 import javax.swing.*;
 import java.awt.*;
 
+//FINESTRA GRAFICA PRINCIPALE
 public class MainFrame extends JFrame {
     private final BarraSuperiore topBar = new BarraSuperiore();
     private final ListaLibri listPanel = new ListaLibri();
@@ -19,8 +20,8 @@ public class MainFrame extends JFrame {
         add(bottomBar, BorderLayout.SOUTH);
     }
 
-    public BarraSuperiore getTopBar(){ return topBar; }
-    public ListaLibri getBookList(){ return listPanel; }
-    public BarraDeiBottoni getBottomBar(){ return bottomBar; }
+    public BarraSuperiore getBarraSuperiore(){ return topBar; }
+    public ListaLibri getListaLibri(){ return listPanel; }
+    public BarraDeiBottoni getBarraDeiBottoni(){ return bottomBar; }
 }
 
