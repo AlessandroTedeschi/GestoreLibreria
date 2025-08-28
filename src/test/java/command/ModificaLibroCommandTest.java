@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Test per ModificaLibroCommand: sostituisce un libro esistente mantenendo lo stesso ISBN.
  */
-public class ModificaLibroCommandTest {
+class ModificaLibroCommandTest {
 
     @Test
     void modificaLibro_sostituisceDatiMantenendoStessoIsbn() {

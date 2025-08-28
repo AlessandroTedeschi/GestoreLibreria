@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class OrdinamentoValutazioneDecrescenteTest {
+class OrdinamentoValutazioneDecrescenteTest {
     private Libreria libreria;
     private Libro libro1;
     private Libro libro2;

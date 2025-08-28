@@ -18,7 +18,7 @@ import java.nio.file.StandardOpenOption;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PersistenzaLibreriaTest
+class PersistenzaLibreriaTest
 {
     @TempDir
     Path tempDir;

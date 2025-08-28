@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class RimuoviLibroCommandTest
+class RimuoviLibroCommandTest
 {   private Libreria libreria;
     private Libro libro1;
     private Libro libro2;

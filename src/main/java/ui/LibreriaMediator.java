@@ -3,6 +3,10 @@ package ui;
 import command.*;
 import libreria.Libro;
 import libreria.Libreria;
+import ordinamento.OrdinamentoAlfabeticoTitolo;
+import ordinamento.OrdinamentoValutazioneCrescente;
+import ordinamento.OrdinamentoValutazioneDecrescente;
+import ordinamento.SortingStrategy;
 
 import javax.swing.*;
 import java.util.*;
@@ -63,14 +67,14 @@ public class LibreriaMediator {
             }
 
             //ricarica i libri in base all'ordinamento scelto dall'utente nella lista
-            Comparator<Libro> cmp = switch (currentSort) {
-                case ALFABETICO -> Comparator.comparing(Libro::getTitolo, String.CASE_INSENSITIVE_ORDER);
-                case VALUTAZIONE_CRESCENTE -> Comparator.comparingInt(Libro::getValutazione)
-                        .thenComparing(Libro::getTitolo, String.CASE_INSENSITIVE_ORDER);
-                case VALUTAZIONE_DECRESCENTE -> Comparator.comparingInt(Libro::getValutazione).reversed()
-                        .thenComparing(Libro::getTitolo, String.CASE_INSENSITIVE_ORDER);
+            SortingStrategy strategy = switch (currentSort) {
+                case ALFABETICO -> new OrdinamentoAlfabeticoTitolo();
+                case VALUTAZIONE_CRESCENTE -> new OrdinamentoValutazioneCrescente();
+                case VALUTAZIONE_DECRESCENTE -> new OrdinamentoValutazioneDecrescente();
+                // se currentSort può essere null:
+                // default -> new OrdinamentoAlfabeticoTitolo();
             };
-            lista = lista.stream().sorted(cmp).collect(Collectors.toList());
+            lista = lista.stream().sorted(strategy).collect(Collectors.toList());
 
             //aggiorna l'interfaccia grafica, mostrando all'uente solo i libri contenuti nella lista (quelli che soddisfano la ricerca)
             //o lo specifico ordinamento scelto
