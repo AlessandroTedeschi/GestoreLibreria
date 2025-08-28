@@ -1,5 +1,6 @@
 package libreria;
 
+import filtri.Filtro;
 import ordinamento.SortingStrategy;
 
 import java.util.*;
@@ -62,6 +63,12 @@ public class Libreria
 
     public List<Libro> ordinamentoLibri(SortingStrategy strategia)
     {   return libreria.values().stream().sorted(strategia).toList();
+    }
+
+    public List<Libro> filtraggio(Filtro filtro)
+    {   if(filtro == null)
+            return getLibri();
+        return libreria.values().stream().filter(filtro::test).toList();
     }
 }
 
