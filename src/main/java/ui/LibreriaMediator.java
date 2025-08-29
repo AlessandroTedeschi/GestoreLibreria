@@ -1,8 +1,10 @@
 package ui;
 
 import command.*;
+import libreria.Genere;
 import libreria.Libro;
 import libreria.Libreria;
+import libreria.StatoLettura;
 import ordinamento.OrdinamentoAlfabeticoTitolo;
 import ordinamento.OrdinamentoValutazioneCrescente;
 import ordinamento.OrdinamentoValutazioneDecrescente;
@@ -17,6 +19,10 @@ public class LibreriaMediator {
     private final Libreria model;
     private final MainFrame frame;
     private final GestoreComandi invoker;
+
+    private StatoLettura filtroStato = null;
+    private Genere filtroGenere = null;
+    private Integer filtroValMin = null;
 
     private String currentQuery = "";
     private OpzioniOrdinamento currentSort = OpzioniOrdinamento.ALFABETICO;
@@ -35,6 +41,15 @@ public class LibreriaMediator {
         //chiamata quando cambia il campo di ordinamento
         frame.getBarraSuperiore().setOnSortChanged(s -> {
             currentSort = (s == null) ? OpzioniOrdinamento.ALFABETICO : s;
+            reloadList();
+        });
+
+        //eventi della barra filtri
+        frame.getBarraFiltri().setOnStatoChanged(s -> { filtroStato = s; reloadList(); });
+        frame.getBarraFiltri().setOnGenereChanged(g -> { filtroGenere = g; reloadList(); });
+        frame.getBarraFiltri().setOnValutazioneMinChanged(v -> { filtroValMin = v; reloadList(); });
+        frame.getBarraFiltri().setOnClear(() -> {
+            filtroStato = null; filtroGenere = null; filtroValMin = null;
             reloadList();
         });
 
@@ -64,6 +79,18 @@ public class LibreriaMediator {
                 lista = tuttiLibri();
             } else {
                 lista = model.cercaLibro(currentQuery);
+            }
+
+            //ricarica i libri applicando i filtri scelti dall'utente
+            if (filtroStato != null) {
+                lista = lista.stream().filter(l -> l.getStatoLettura() == filtroStato).toList();
+            }
+            if (filtroGenere != null) {
+                lista = lista.stream().filter(l -> l.getGenere() == filtroGenere).toList();
+            }
+            if (filtroValMin != null) {
+                final int min = filtroValMin;
+                lista = lista.stream().filter(l -> l.getValutazione() >= min).toList();
             }
 
             //ricarica i libri in base all'ordinamento scelto dall'utente nella lista

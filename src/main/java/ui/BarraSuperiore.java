@@ -1,5 +1,8 @@
 package ui;
 
+import libreria.Genere;
+import libreria.StatoLettura;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -84,6 +87,9 @@ public class BarraSuperiore extends JPanel {
     public void setOnAdd(Runnable r){ onAdd = (r != null) ? r : () -> {}; }
     public void setSearchText(String text) { searchField.setText(text != null ? text : ""); }
 }
+
+
+
 
 
 
