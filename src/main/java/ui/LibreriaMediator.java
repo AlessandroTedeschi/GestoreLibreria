@@ -47,7 +47,7 @@ public class LibreriaMediator {
         //eventi della barra filtri
         frame.getBarraFiltri().setOnStatoChanged(s -> { filtroStato = s; reloadList(); });
         frame.getBarraFiltri().setOnGenereChanged(g -> { filtroGenere = g; reloadList(); });
-        frame.getBarraFiltri().setOnValutazioneMinChanged(v -> { filtroValMin = v; reloadList(); });
+        frame.getBarraFiltri().setOnValutazioneChanged(v -> { filtroValMin = v; reloadList(); });
         frame.getBarraFiltri().setOnClear(() -> {
             filtroStato = null; filtroGenere = null; filtroValMin = null;
             reloadList();
@@ -90,7 +90,7 @@ public class LibreriaMediator {
             }
             if (filtroValMin != null) {
                 final int min = filtroValMin;
-                lista = lista.stream().filter(l -> l.getValutazione() >= min).toList();
+                lista = lista.stream().filter(l -> l.getValutazione() == min).toList();
             }
 
             //ricarica i libri in base all'ordinamento scelto dall'utente nella lista
@@ -98,8 +98,6 @@ public class LibreriaMediator {
                 case ALFABETICO -> new OrdinamentoAlfabeticoTitolo();
                 case VALUTAZIONE_CRESCENTE -> new OrdinamentoValutazioneCrescente();
                 case VALUTAZIONE_DECRESCENTE -> new OrdinamentoValutazioneDecrescente();
-                // se currentSort può essere null:
-                // default -> new OrdinamentoAlfabeticoTitolo();
             };
             lista = lista.stream().sorted(strategy).collect(Collectors.toList());
 

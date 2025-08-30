@@ -1,13 +1,5 @@
 [
   {
-    "titolo": "Il ramo d\u0027oro",
-    "autore": "Frazer",
-    "isbn": "547453",
-    "genere": "ROMANZO",
-    "statoLettura": "LETTO",
-    "valutazione": 2
-  },
-  {
     "titolo": "Divina Commedia",
     "autore": "Dante Alighieri",
     "isbn": "123",
@@ -30,5 +22,21 @@
     "genere": "ROMANZO",
     "statoLettura": "IN_LETTURA",
     "valutazione": 0
+  },
+  {
+    "titolo": "nytntnt",
+    "autore": "btrtynt",
+    "isbn": "ytg",
+    "genere": "ROMANZO",
+    "statoLettura": "LETTO",
+    "valutazione": 2
+  },
+  {
+    "titolo": "Il ramo d\u0027oro",
+    "autore": "Frazer",
+    "isbn": "547453",
+    "genere": "BIOGRAFIA",
+    "statoLettura": "LETTO",
+    "valutazione": 2
   }
 ]

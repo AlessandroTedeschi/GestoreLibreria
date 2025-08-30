@@ -7,28 +7,30 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.function.Consumer;
 
+//pannello dei filtri Valutazione, StatoLettura e Genere
 public class BarraFiltri extends JPanel {
 
+    //"menu" a tendina con le diverse opzioni e bottone per pulire i filtri
     private final JComboBox<StatoLettura> statoCombo = new JComboBox<>();
     private final JComboBox<Genere> genereCombo = new JComboBox<>();
-    private final JComboBox<Integer> valutazioneMinCombo = new JComboBox<>();
+    private final JComboBox<Integer> valutazioneCombo = new JComboBox<>();
     private final JButton clearBtn = new JButton("Pulisci filtri");
 
 
     private Consumer<StatoLettura> onStatoChanged = s -> {};
     private Consumer<Genere> onGenereChanged = g -> {};
-    private Consumer<Integer> onValutazioneMinChanged = v -> {};
+    private Consumer<Integer> onValutazioneChanged = v -> {};
     private Runnable onClear = () -> {};
 
     public BarraFiltri() {
         super(new FlowLayout(FlowLayout.CENTER, 12, 6));
 
+        //font e accorgimenti grafici per etichette, dati combo e bottone
         Font labelFont = getFont().deriveFont(Font.PLAIN, 12f);
         Font comboFont = getFont().deriveFont(Font.PLAIN,12f);
-
         Dimension comboLg = new Dimension(100,25);
         Dimension comboSm = new Dimension(70,25);
-        Dimension btnSize = new Dimension(90,25);
+        Dimension btnSize = new Dimension(82,25);
 
         JLabel lblStato = new JLabel("Stato:");
         lblStato.setFont(labelFont);
@@ -41,52 +43,50 @@ public class BarraFiltri extends JPanel {
 
         setBorder(javax.swing.BorderFactory.createEmptyBorder(2, 0, 2, 0));
 
+        //null per rappresentare il filtro "Tutti"
         statoCombo.addItem(null);
         for (StatoLettura s : StatoLettura.values()) statoCombo.addItem(s);
-
         genereCombo.addItem(null);
         for (Genere g : Genere.values()) genereCombo.addItem(g);
+        valutazioneCombo.addItem(null);
+        for (int i = 1; i <= 5; i++) valutazioneCombo.addItem(i);
 
-        valutazioneMinCombo.addItem(null);
-        for (int i = 1; i <= 5; i++) valutazioneMinCombo.addItem(i);
 
-        // ---------- applica font e dimensioni ai combo/bottone ----------
         statoCombo.setFont(comboFont);
         genereCombo.setFont(comboFont);
-        valutazioneMinCombo.setFont(comboFont);
+        valutazioneCombo.setFont(comboFont);
         clearBtn.setFont(comboFont);
-
         statoCombo.setPreferredSize(comboLg);
         statoCombo.setMaximumSize(comboLg);
         genereCombo.setPreferredSize(comboLg);
         genereCombo.setMaximumSize(comboLg);
-        valutazioneMinCombo.setPreferredSize(comboSm);
-        valutazioneMinCombo.setMaximumSize(comboSm);
+        valutazioneCombo.setPreferredSize(comboSm);
+        valutazioneCombo.setMaximumSize(comboSm);
         clearBtn.setPreferredSize(btnSize);
         clearBtn.setMaximumSize(btnSize);
 
-        // renderer che mostra "Tutti" per i null + forza il font anche nella lista a tendina
+        //filtro null rinominato "Tutti"
         statoCombo.setRenderer(tuttiRenderer("Tutti", comboFont));
         genereCombo.setRenderer(tuttiRenderer("Tutti", comboFont));
-        valutazioneMinCombo.setRenderer(tuttiRenderer("Tutti", comboFont));
+        valutazioneCombo.setRenderer(tuttiRenderer("Tutti", comboFont));
 
-        // ---------- composizione UI (come prima, solo con etichette più grandi) ----------
+
         add(lblStato);
         add(statoCombo);
         add(lblGenere);
         add(genereCombo);
         add(lblValutazione);
-        add(valutazioneMinCombo);
+        add(valutazioneCombo);
         add(clearBtn);
 
-        // ---------- listener (uguali) ----------
+        //collegamento di ogni bottone al corrispondente evento al momento della pressione del bottone
         statoCombo.addActionListener(e -> onStatoChanged.accept((StatoLettura) statoCombo.getSelectedItem()));
         genereCombo.addActionListener(e -> onGenereChanged.accept((Genere) genereCombo.getSelectedItem()));
-        valutazioneMinCombo.addActionListener(e -> onValutazioneMinChanged.accept((Integer) valutazioneMinCombo.getSelectedItem()));
+        valutazioneCombo.addActionListener(e -> onValutazioneChanged.accept((Integer) valutazioneCombo.getSelectedItem()));
         clearBtn.addActionListener(e -> { reset(); onClear.run(); });
     }
 
-    // Renderer che gestisce "Tutti" e applica il font anche all'elenco
+    //metodo che serve per scrivere all'interno della combo le diverse etichette (i valori)
     private static DefaultListCellRenderer tuttiRenderer(String label, Font font) {
         return new DefaultListCellRenderer() {
             @Override
@@ -100,16 +100,17 @@ public class BarraFiltri extends JPanel {
         };
     }
 
+    //resetta tutti i filtri portandoli allo stato "Tutti"
     public void reset() {
         statoCombo.setSelectedItem(null);
         genereCombo.setSelectedItem(null);
-        valutazioneMinCombo.setSelectedItem(null);
+        valutazioneCombo.setSelectedItem(null);
     }
 
-    // callback per il Mediator (immutate)
+    //collegamento delle azioni da eseguire alla pressione del bottone o alla scelta di un filtro, eseguite da mediator
     public void setOnStatoChanged(Consumer<StatoLettura> c) { onStatoChanged = c != null ? c : s -> {}; }
     public void setOnGenereChanged(Consumer<Genere> c) { onGenereChanged = c != null ? c : g -> {}; }
-    public void setOnValutazioneMinChanged(Consumer<Integer> c) { onValutazioneMinChanged = c != null ? c : v -> {}; }
+    public void setOnValutazioneChanged(Consumer<Integer> c) { onValutazioneChanged = c != null ? c : v -> {}; }
     public void setOnClear(Runnable r) { onClear = r != null ? r : () -> {}; }
 }
 

@@ -5,6 +5,10 @@ public enum Genere
     BIOGRAFIA("Biografia"),
     FANTASY("Fantasy"),
     GIALLO("Giallo"),
+    POEMA("Poema"),
+    STORICO("Storico"),
+    AVVENTURA("Avventura"),
+    HORROR("Horror"),
     SCIENTIFICO("Scientifico"),
     MANUALE("Manuale"),
     POESIA("Poesia");
