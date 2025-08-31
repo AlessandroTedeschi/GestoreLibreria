@@ -8,12 +8,12 @@
     "valutazione": 3
   },
   {
-    "titolo": "La Coscienza di Zeno",
-    "autore": "Italo Svevo",
-    "isbn": "789",
-    "genere": "ROMANZO",
+    "titolo": "Il ramo d\u0027oro",
+    "autore": "Frazer",
+    "isbn": "547453",
+    "genere": "BIOGRAFIA",
     "statoLettura": "LETTO",
-    "valutazione": 5
+    "valutazione": 2
   },
   {
     "titolo": "Uno, Nessuno e Centomila",
@@ -24,19 +24,11 @@
     "valutazione": 0
   },
   {
-    "titolo": "nytntnt",
-    "autore": "btrtynt",
-    "isbn": "ytg",
+    "titolo": "La Coscienza di Zeno",
+    "autore": "Italo Svevo",
+    "isbn": "789",
     "genere": "ROMANZO",
     "statoLettura": "LETTO",
-    "valutazione": 2
-  },
-  {
-    "titolo": "Il ramo d\u0027oro",
-    "autore": "Frazer",
-    "isbn": "547453",
-    "genere": "BIOGRAFIA",
-    "statoLettura": "LETTO",
-    "valutazione": 2
+    "valutazione": 4
   }
 ]

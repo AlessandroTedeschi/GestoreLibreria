@@ -47,7 +47,7 @@ public class BookFormDialog extends JDialog {
 
         //dimensioni finestra di dialogo
         pack();
-        setSize(getWidth() + 80, getHeight() + 40);
+        setSize(getWidth() + 200, getHeight() + 50);
         setLocationRelativeTo(owner);
 
         if (editMode) isbn.setEditable(false); //quando un libro viene aggiunto allora isbn modificabile, quando un libro viene modificato isbn immodificabile
