@@ -1,0 +1,76 @@
+@startuml
+component A
+component B
+A --> B
+@enduml
+
+
+@startuml
+skinparam componentStyle uml2
+skinparam linetype ortho
+skinparam dpi 180
+
+' ============ Componenti macro ============
+component "UI" as UI
+component "LibreriaMediator\n(Mediator)" as Mediator
+component "Command" as Cmd
+component "Filtri" as Filtri
+component "Ordinamento" as Ord
+component "Persistenza (JSON)" as Persist
+component "Dominio" as Domain
+
+' ============ Interfacce (porte) ============
+interface IGestioneLibreria
+interface IComandi
+interface IFiltraggio
+interface IOrdinamento
+interface IPersistenza
+interface IModello
+
+' ============ Collegamenti principali ============
+UI -down-> IGestioneLibreria
+IGestioneLibreria -down-> Mediator
+
+Mediator -right-> IComandi
+Mediator -right-> IFiltraggio
+Mediator -right-> IOrdinamento
+Mediator -right-> IPersistenza
+Mediator -down-> IModello
+
+Cmd -up-> IComandi
+Filtri -up-> IFiltraggio
+Ord -up-> IOrdinamento
+Persist -up-> IPersistenza
+Domain -up-> IModello
+
+' ============ (Facoltativo) Note per ricordare cosa c'è dentro ai componenti ============
+note bottom of UI
+Applicazione, MainFrame, BarraSuperiore,
+BarraDeiBottoni, BarraFiltri, ListaLibri,
+BookFormDialog, OpzioniOrdinamento
+end note
+
+note right of Cmd
+AggiungiLibroCommand, RimuoviLibroCommand,
+ModificaLibroCommand, GestoreComandi
+(aggiungi/rimuovi annullabili; modifica no)
+end note
+
+note right of Filtri
+Filtro (Strategy), GenereFilter, StatoLetturaFilter,
+ValutazioneFilter, FiltroAnd, FiltroDecorator
+end note
+
+note right of Ord
+SortingStrategy, OrdinamentoAlfabeticoTitolo,
+OrdinamentoValutazioneCrescente/Decrescente
+end note
+
+note right of Persist
+PersistenzaLibreria, LibroDTO (file JSON)
+end note
+
+note bottom of Domain
+Libreria, Libro, Genere, StatoLettura
+end note
+@enduml

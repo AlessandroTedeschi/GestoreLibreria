@@ -18,6 +18,7 @@ class OrdinamentoAlfabeticoTitoloTest
     private Libro libro1;
     private Libro libro2;
     private Libro libro3;
+    SortingStrategy strategy = new OrdinamentoAlfabeticoTitolo();
 
     @BeforeEach
     void setUp()
@@ -35,7 +36,7 @@ class OrdinamentoAlfabeticoTitoloTest
                 .statoLettura(StatoLettura.LETTO)
                 .valutazione(4)
                 .build());
-        List<Libro> ordinati = libreria.ordinamentoLibri(new OrdinamentoAlfabeticoTitolo());
+        List<Libro> ordinati = strategy.ordina(libreria.getLibri());
         assertEquals(List.of(libro2, libro1, libro3), ordinati, "L'ordinamento alfabetico per titolo non corrisponde");
         assertEquals(3, libreria.numeroLibri(), "Libreria non deve essere modificata dall'ordinamento");
     }

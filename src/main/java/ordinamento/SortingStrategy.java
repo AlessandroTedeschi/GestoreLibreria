@@ -1,10 +1,9 @@
 package ordinamento;
 
 import libreria.Libro;
+import java.util.List;
 
-import java.util.Comparator;
-
-public interface SortingStrategy extends Comparator<Libro>
+public interface SortingStrategy
 {
-    String getNome();
+    List<Libro> ordina(List<Libro> libri);
 }

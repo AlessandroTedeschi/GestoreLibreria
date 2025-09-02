@@ -16,6 +16,7 @@ class OrdinamentoValutazioneDecrescenteTest {
     private Libro libro1;
     private Libro libro2;
     private Libro libro3;
+    SortingStrategy strategy = new OrdinamentoValutazioneDecrescente();
 
     @BeforeEach
     void setUp()
@@ -41,7 +42,7 @@ class OrdinamentoValutazioneDecrescenteTest {
         libreria.aggiungiLibro(libro1);
         libreria.aggiungiLibro(libro2);
         libreria.aggiungiLibro(libro3);
-        List<Libro> ordinati = libreria.ordinamentoLibri(new OrdinamentoValutazioneDecrescente());
+        List<Libro> ordinati = strategy.ordina(libreria.getLibri());
         assertEquals(List.of(libro2, libro1, libro3), ordinati, "Valori attesi: 5, 4, 2");
         assertEquals(3, libreria.numeroLibri());
     }

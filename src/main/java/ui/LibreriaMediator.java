@@ -5,10 +5,7 @@ import libreria.Genere;
 import libreria.Libro;
 import libreria.Libreria;
 import libreria.StatoLettura;
-import ordinamento.OrdinamentoAlfabeticoTitolo;
-import ordinamento.OrdinamentoValutazioneCrescente;
-import ordinamento.OrdinamentoValutazioneDecrescente;
-import ordinamento.SortingStrategy;
+import ordinamento.*;
 
 import javax.swing.*;
 import java.util.*;
@@ -19,6 +16,7 @@ public class LibreriaMediator {
     private final Libreria model;
     private final MainFrame frame;
     private final GestoreComandi invoker;
+    private final SortingContext ordinatore = new SortingContext(new OrdinamentoAlfabeticoTitolo());
 
     private StatoLettura filtroStato = null;
     private Genere filtroGenere = null;
@@ -68,6 +66,13 @@ public class LibreriaMediator {
         reloadList();
     }
 
+    private SortingStrategy toStrategy(OpzioniOrdinamento currentSort) {
+        return switch (currentSort) {
+            case ALFABETICO -> new OrdinamentoAlfabeticoTitolo();
+            case VALUTAZIONE_CRESCENTE -> new OrdinamentoValutazioneCrescente();
+            case VALUTAZIONE_DECRESCENTE -> new OrdinamentoValutazioneDecrescente();
+        };
+    }
 
     //ricarica i dati salvati nella tabella dei libri ogni volta che un'azione dell'utente lo richiede
     public void reloadList() {
@@ -93,13 +98,12 @@ public class LibreriaMediator {
                 lista = lista.stream().filter(l -> l.getValutazione() == min).toList();
             }
 
+
+
             //ricarica i libri in base all'ordinamento scelto dall'utente nella lista
-            SortingStrategy strategy = switch (currentSort) {
-                case ALFABETICO -> new OrdinamentoAlfabeticoTitolo();
-                case VALUTAZIONE_CRESCENTE -> new OrdinamentoValutazioneCrescente();
-                case VALUTAZIONE_DECRESCENTE -> new OrdinamentoValutazioneDecrescente();
-            };
-            lista = lista.stream().sorted(strategy).collect(Collectors.toList());
+            SortingStrategy strategy = toStrategy(currentSort);
+            ordinatore.setStrategy(strategy);
+            lista=ordinatore.ordina(lista);
 
             //aggiorna l'interfaccia grafica, mostrando all'uente solo i libri contenuti nella lista (quelli che soddisfano la ricerca)
             //o lo specifico ordinamento scelto

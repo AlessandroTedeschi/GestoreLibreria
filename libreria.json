@@ -16,19 +16,19 @@
     "valutazione": 2
   },
   {
-    "titolo": "Uno, Nessuno e Centomila",
-    "autore": "Pirandello",
-    "isbn": "543654",
-    "genere": "ROMANZO",
-    "statoLettura": "IN_LETTURA",
-    "valutazione": 0
-  },
-  {
     "titolo": "La Coscienza di Zeno",
     "autore": "Italo Svevo",
     "isbn": "789",
     "genere": "ROMANZO",
     "statoLettura": "LETTO",
     "valutazione": 4
+  },
+  {
+    "titolo": "Uno, Nessuno e Centomila",
+    "autore": "Pirandello",
+    "isbn": "543654",
+    "genere": "ROMANZO",
+    "statoLettura": "IN_LETTURA",
+    "valutazione": 0
   }
 ]

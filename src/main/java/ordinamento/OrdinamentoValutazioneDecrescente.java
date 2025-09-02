@@ -2,17 +2,32 @@ package ordinamento;
 
 import libreria.Libro;
 
+import java.text.Collator;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
+
 public class OrdinamentoValutazioneDecrescente implements SortingStrategy
 {
-    public int compare(Libro l1, Libro l2)
-    {   Integer v1 = l1.getValutazione();
-        Integer v2 = l2.getValutazione();
-        return v2.compareTo(v1);
+    private final Collator collator;
+
+    public OrdinamentoValutazioneDecrescente() { this(Locale.ITALY); }
+    public OrdinamentoValutazioneDecrescente(Locale locale) {
+        this.collator = Collator.getInstance(locale);
+        this.collator.setStrength(Collator.PRIMARY);
     }
 
-
     @Override
-    public String getNome()
-    {   return "Ordinamento per valutazione decrescente";
+    public List<Libro> ordina(List<Libro> input) {
+        List<Libro> out = new ArrayList<>(input);
+        out.sort(
+                Comparator.comparingInt(Libro::getValutazione).reversed()  // <— int + reversed
+                        .thenComparing((a, b) -> collator.compare(
+                                a.getTitolo() == null ? "" : a.getTitolo(),
+                                b.getTitolo() == null ? "" : b.getTitolo()
+                        ))
+        );
+        return out;
     }
 }

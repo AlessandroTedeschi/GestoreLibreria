@@ -61,10 +61,6 @@ public class Libreria
         return ret;
     }
 
-    public List<Libro> ordinamentoLibri(SortingStrategy strategia)
-    {   return libreria.values().stream().sorted(strategia).toList();
-    }
-
     public List<Libro> filtraggio(Filtro filtro)
     {   if(filtro == null)
             return getLibri();
