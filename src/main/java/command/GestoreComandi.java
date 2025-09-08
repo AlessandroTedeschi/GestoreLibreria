@@ -6,12 +6,17 @@ import java.util.LinkedList;
 //INVOKER DEI COMANDI
 public class GestoreComandi
 {
+    private Command corrente;
     private final LinkedList<UndoableCommand> storiaComandi = new LinkedList<>();   //segue la logica LIFO
 
-    public void esegui(Command cmd)
-    {   cmd.execute();
+    public void setCommand(Command cmd)
+    {   this.corrente = cmd;}
+
+
+    public void esegui()
+    {   corrente.execute();
         //se il comando è annullabile lo mette in cima dello stack della cronologia dei comandi eseguiti
-        if (cmd instanceof UndoableCommand u) {
+        if (corrente instanceof UndoableCommand u) {
             storiaComandi.addFirst(u); // push
         }
     }

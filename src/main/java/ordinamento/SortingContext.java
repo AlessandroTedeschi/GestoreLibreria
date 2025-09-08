@@ -14,6 +14,6 @@ public class SortingContext
 
     public List<Libro> ordina(List<Libro> libri) {
         if (strategy == null) throw new IllegalStateException("Nessuna strategy impostata");
-        return strategy.ordina(libri); // restituisce una copia ordinata
+        return strategy.ordina(libri);
     }
 }

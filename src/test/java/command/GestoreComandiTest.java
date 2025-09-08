@@ -33,7 +33,8 @@ class GestoreComandiTest
     void eseguiTracciaEUndoRipristina() {
         assertEquals(0, libreria.numeroLibri());
         AggiungiLibroCommand addCmd = new AggiungiLibroCommand(libro1, libreria);   //command annulabile
-        gestore.esegui(addCmd);
+        gestore.setCommand(addCmd);
+        gestore.esegui();
         assertEquals(1, libreria.numeroLibri(), "Dopo execute() deve esserci 1 libro");
         assertTrue(gestore.hasUndo(), "Il gestore deve avere qualcosa da annullare");
         gestore.annullaUltimoComando();
@@ -58,8 +59,10 @@ class GestoreComandiTest
     @Test
     @DisplayName("clearStory() svuota la cronologia")
     void clearStorySvuotaCronologia() {
-        gestore.esegui(new AggiungiLibroCommand(libro1, libreria));
-        gestore.esegui(new AggiungiLibroCommand(libro2, libreria));
+        gestore.setCommand(new AggiungiLibroCommand(libro1, libreria));
+        gestore.esegui();
+        gestore.setCommand(new AggiungiLibroCommand(libro2, libreria));
+        gestore.esegui();
         assertTrue(gestore.hasUndo());
         gestore.clearStory();
         assertFalse(gestore.hasUndo(), "Dopo clearStory() non devono esserci undo disponibili");
@@ -68,8 +71,10 @@ class GestoreComandiTest
     @Test
     @DisplayName("LIFO: l'ultimo command annullabile è il primo ad essere annullato")
     void lifoOrder() {
-        gestore.esegui(new AggiungiLibroCommand(libro1, libreria)); // primo
-        gestore.esegui(new AggiungiLibroCommand(libro2, libreria)); // secondo
+        gestore.setCommand(new AggiungiLibroCommand(libro1, libreria));
+        gestore.esegui(); // primo
+        gestore.setCommand(new AggiungiLibroCommand(libro2, libreria));
+        gestore.esegui(); // secondo
         assertEquals(2, libreria.numeroLibri());
         //eseguo undo dal gestore (deve togliere libro2)
         gestore.annullaUltimoComando();

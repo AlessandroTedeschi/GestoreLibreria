@@ -6,7 +6,8 @@ public class Libro
     private final String autore;
     private final String ISBN;
     private final Genere genere;
-    //attributi mutabili
+
+
     private StatoLettura statoLettura;
     private int valutazione;
 
@@ -27,21 +28,6 @@ public class Libro
             this.ISBN = ISBN;
             this.genere = genere;
         }
-
-        /*public Builder titolo(String titolo)
-        {   this.titolo = titolo; return this;
-        }
-
-        public Builder autore(String autore)
-        {   this.autore = autore; return this;
-        }
-
-        public Builder ISBN(String ISBN)
-        {   this.ISBN = ISBN; return this;
-        }
-
-        public Builder genere(Genere genere)
-        {   this.genere = genere; return this;}*/
 
         public Builder statoLettura(StatoLettura statoLettura)
         {   this.statoLettura = statoLettura; return this;

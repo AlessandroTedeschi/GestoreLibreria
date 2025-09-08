@@ -1,15 +1,15 @@
 package ui;
 
 import command.*;
+import filtri.*;
 import libreria.Genere;
 import libreria.Libro;
 import libreria.Libreria;
 import libreria.StatoLettura;
 import ordinamento.*;
-
 import javax.swing.*;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 public class LibreriaMediator {
 
@@ -86,18 +86,14 @@ public class LibreriaMediator {
                 lista = model.cercaLibro(currentQuery);
             }
 
-            //ricarica i libri applicando i filtri scelti dall'utente
-            if (filtroStato != null) {
-                lista = lista.stream().filter(l -> l.getStatoLettura() == filtroStato).toList();
-            }
-            if (filtroGenere != null) {
-                lista = lista.stream().filter(l -> l.getGenere() == filtroGenere).toList();
-            }
-            if (filtroValMin != null) {
-                final int min = filtroValMin;
-                lista = lista.stream().filter(l -> l.getValutazione() == min).toList();
-            }
 
+            Filtro chain = b -> true; // filtro neutro
+
+            if (filtroStato != null)    chain = new FiltroAnd(chain, new StatoLetturaFilter(filtroStato));
+            if (filtroGenere != null)   chain = new FiltroAnd(chain, new GenereFilter(filtroGenere));
+            if (filtroValMin != null)   chain = new FiltroAnd(chain, new ValutazioneFilter(filtroValMin));
+
+            lista = lista.stream().filter(chain::test).toList();
 
 
             //ricarica i libri in base all'ordinamento scelto dall'utente nella lista
@@ -139,7 +135,8 @@ public class LibreriaMediator {
             //il libro appena "compilato" nella finestra di dialogo viene aggiunto
             Libro nuovo = res.libro();
             UndoableCommand cmd = new AggiungiLibroCommand(nuovo, model);
-            invoker.esegui(cmd);
+            invoker.setCommand(cmd);
+            invoker.esegui();
 
             //viene ricaricata la lista
             currentQuery = "";
@@ -217,7 +214,8 @@ public class LibreriaMediator {
         //rimuove il libro e aggiorna la lista dei libri
         try {
             UndoableCommand cmd = new RimuoviLibroCommand(isbn, model);
-            invoker.esegui(cmd);
+            invoker.setCommand(cmd);
+            invoker.esegui();
             reloadList();
             //updateButtonsState();
         } catch (Exception ex) {
